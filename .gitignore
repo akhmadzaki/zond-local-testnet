@@ -1,0 +1,6 @@
+node_modules/
+genesis.ssz
+bin/
+boot/
+zond-testnet-*/
+boot.key
