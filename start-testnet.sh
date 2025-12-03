@@ -88,7 +88,7 @@ nohup ./bin/bootnode --nodekey=boot.key -addr=$EXTIP:$GZOND_BOOTNODE_PORT -verbo
 sleep 0.5
 
 #start cl bootnode
-nohup ./bin/beacon-chain --datadir=$BOOT_DIR/beacondata --min-sync-peers=0  --bootstrap-node=  --execution-endpoint=   --accept-terms-of-use   --jwt-secret=  --verbosity info --disable-monitoring --disable-grpc-gateway --disable-aggregate-parallel --disable-grpc-connection-logging --disable-optional-engine-methods --disable-staking-contract-check --checkpoint-sync-url= --genesis-state=genesis.ssz --chain-config-file=config.yml   --config-file=config.yml   --chain-id=7070 --p2p-max-peers=1000 --p2p-tcp-port=$QRYSM_BEACON_P2P_TCP_PORT --p2p-udp-port=$QRYSM_BEACON_P2P_UDP_PORT --rpc-port=$QRYSM_BEACON_RPC_PORT > $BOOT_DIR/logs/beacon.log 2>&1 &
+nohup ./bin/beacon-chain --datadir=$BOOT_DIR/beacondata --min-sync-peers=0  --bootstrap-node=  --execution-endpoint=   --accept-terms-of-use   --jwt-secret=  --verbosity info --disable-monitoring --disable-grpc-gateway --disable-aggregate-parallel --disable-grpc-connection-logging --disable-optional-engine-methods --disable-staking-contract-check --checkpoint-sync-url= --genesis-state=genesis.ssz --chain-config-file=config.yml   --config-file=config.yml   --chain-id=1468 --p2p-max-peers=1000 --p2p-tcp-port=$QRYSM_BEACON_P2P_TCP_PORT --p2p-udp-port=$QRYSM_BEACON_P2P_UDP_PORT --rpc-port=$QRYSM_BEACON_RPC_PORT > $BOOT_DIR/logs/beacon.log 2>&1 &
 
 sleep 0.5
 
@@ -128,12 +128,12 @@ for (( i=1; i<=$NUM_NODES; i++ )); do
     if [ "$i" -eq 1 ]; then
       jq --arg seed "$provider" '.provider = $seed' send-tx/config.json > tmp.config.json && mv tmp.config.json send-tx/config.json
     fi
-    nohup ./bin/gzond   --nat=extip:0.0.0.0 --networkid=7070   --http   --http.api "web3,zond,net"   --datadir="$NODE_DIR"/gzonddata --syncmode=full   --snapshot=false --authrpc.jwtsecret="$NODE_DIR"/jwt.hex --bootnodes="$ENODE" --authrpc.port=$((GZOND_AUTH_RPC_PORT + i)) --http.port=$((GZOND_HTTP_PORT + i)) --ws.port=$((GZOND_WS_PORT + i)) --discovery.port=$((GZOND_NETWORK_PORT + i)) --port=$((GZOND_NETWORK_PORT + i)) --pprof.port=$((GZOND_PPROF_PORT + i)) --metrics.port=$((GZOND_METRICS_PORT + i)) > "$NODE_DIR"/logs/gzond.log 2>&1 &
+    nohup ./bin/gzond   --nat=extip:0.0.0.0 --networkid=1468   --http   --http.api "web3,zond,net"   --datadir="$NODE_DIR"/gzonddata --syncmode=full   --snapshot=false --authrpc.jwtsecret="$NODE_DIR"/jwt.hex --bootnodes="$ENODE" --authrpc.port=$((GZOND_AUTH_RPC_PORT + i)) --http.port=$((GZOND_HTTP_PORT + i)) --ws.port=$((GZOND_WS_PORT + i)) --discovery.port=$((GZOND_NETWORK_PORT + i)) --port=$((GZOND_NETWORK_PORT + i)) --pprof.port=$((GZOND_PPROF_PORT + i)) --metrics.port=$((GZOND_METRICS_PORT + i)) > "$NODE_DIR"/logs/gzond.log 2>&1 &
 
     sleep 0.5
 
     #start beacon-chain
-    nohup ./bin/beacon-chain   --datadir="$NODE_DIR"/beacondata --min-sync-peers=0   --genesis-state=genesis.ssz  --chain-config-file=config.yml   --config-file=config.yml   --chain-id=7070   --execution-endpoint="http://localhost:$((GZOND_AUTH_RPC_PORT + i))"   --accept-terms-of-use   --jwt-secret="$NODE_DIR"/jwt.hex  --contract-deployment-block=0   --verbosity info --suggested-fee-recipient=Z20e526833d2ab5bd20de64cc00f2c2c7a07060bf --monitoring-port=$((QRYSM_BEACON_MONITORING_PORT + i)) --p2p-tcp-port=$((QRYSM_BEACON_P2P_TCP_PORT + i)) --p2p-udp-port=$((QRYSM_BEACON_P2P_UDP_PORT + i)) --rpc-port=$((QRYSM_BEACON_RPC_PORT + i)) --grpc-gateway-port=$((QRYSM_BEACON_GRPC_GATEWAY_PORT + i)) --pprofport=$((QRYSM_BEACON_PPROF_PORT + i)) --bootstrap-node="$ENR" > "$NODE_DIR"/logs/beacon.log 2>&1 &
+    nohup ./bin/beacon-chain   --datadir="$NODE_DIR"/beacondata --min-sync-peers=0   --genesis-state=genesis.ssz  --chain-config-file=config.yml   --config-file=config.yml   --chain-id=1468   --execution-endpoint="http://localhost:$((GZOND_AUTH_RPC_PORT + i))"   --accept-terms-of-use   --jwt-secret="$NODE_DIR"/jwt.hex  --contract-deployment-block=0   --verbosity info --suggested-fee-recipient=Z20e526833d2ab5bd20de64cc00f2c2c7a07060bf --monitoring-port=$((QRYSM_BEACON_MONITORING_PORT + i)) --p2p-tcp-port=$((QRYSM_BEACON_P2P_TCP_PORT + i)) --p2p-udp-port=$((QRYSM_BEACON_P2P_UDP_PORT + i)) --rpc-port=$((QRYSM_BEACON_RPC_PORT + i)) --grpc-gateway-port=$((QRYSM_BEACON_GRPC_GATEWAY_PORT + i)) --pprofport=$((QRYSM_BEACON_PPROF_PORT + i)) --bootstrap-node="$ENR" > "$NODE_DIR"/logs/beacon.log 2>&1 &
 
     sleep 0.5
 
