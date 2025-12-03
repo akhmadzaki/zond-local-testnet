@@ -22,33 +22,33 @@ $ git clone https://github.com/theQRL/go-zond.git
 
 ## Setup
 
-Make and move into directory where you want to run local testnet.
+Clone the repo.
 
 ```bash
-$ mkdir local-testnet
-$ cd local-testnet
+$ git clone https://github.com/akhmadzaki/zond-local-testnet.git
+$ cd zond-local-testnet
 $ mkdir bin
 ```
 
-Then, build required binary to run local-testnet, you just need to run this once at the start (note directories where you clone go-zond and qrysm).
+Then, build required binary to run local testnet, you just need to run this once at the start (note directories where you clone go-zond and qrysm).
 
 ```bash
 $ gobrew use 1.21.5
 $ cd go-zond/
 $ make all
-$ cp build/bin/gzond local-testnet/bin/
-$ cp build/bin/bootnode local-testnet/bin/
+$ cp build/bin/gzond zond-local-testnet/bin/
+$ cp build/bin/bootnode zond-local-testnet/bin/
 
 $ cd qrysm/
-$ go build -o=local-testnet/bin/beacon-chain ./cmd/beacon-chain
-$ go build -o=local-testnet/bin/validator ./cmd/validator
-$ go build -o=local-testnet/bin/qrysmctl ./cmd/qrysmctl
-$ go build -o=local-testnet/bin/deposit ./cmd/staking-deposit-cli/deposit
+$ go build -o=zond-local-testnet/bin/beacon-chain ./cmd/beacon-chain
+$ go build -o=zond-local-testnet/bin/validator ./cmd/validator
+$ go build -o=zond-local-testnet/bin/qrysmctl ./cmd/qrysmctl
+$ go build -o=zond-local-testnet/bin/deposit ./cmd/staking-deposit-cli/deposit
 ```
 
 ## Run
 
-To run local-testnet, you can simply run `start-testnet.sh` script in root directory. You can change `NUM_NODES` value to the number of nodes you want in the local testnet.
+To run local testnet, you can simply run `start-testnet.sh` script in root directory. You can change `NUM_NODES` value to the number of nodes you want in the local testnet.
 
 ```bash
 bash ./start-testnet.sh
