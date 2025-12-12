@@ -1,6 +1,13 @@
 #!/bin/bash
 
-ps aux | grep zond-testnet- | grep -v grep | awk '{print $2}' | xargs -r kill -9
-ps aux | grep bin/bootnode | grep -v grep | awk '{print $2}' | xargs -r kill -9
+#stop VC node
+ps aux | grep beacon-rest-api-provider | grep -v grep | awk '{print $2}' | xargs -r kill -9
+#stop CL node
+ps aux | grep min-sync-peers | grep -v grep | awk '{print $2}' | xargs -r kill -9
+#stop EL node
+ps aux | grep authrpc.jwtsecret | grep -v grep | awk '{print $2}' | xargs -r kill -9
 
-sleep 1
+#stop EL bootnode
+ps aux | grep nodekey=boot.key | grep -v grep | awk '{print $2}' | xargs -r kill -9
+
+sleep 2
