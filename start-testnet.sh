@@ -81,7 +81,7 @@ jq --arg seed "$result" '.hexseed = $seed' send-tx/config.json > tmp.config.json
 ./bin/qrysmctl testnet generate-genesis --output-ssz=./genesis.ssz --chain-config-file=./config.yml --gzond-genesis-json-in=genesis.json --gzond-genesis-json-out=genesis.json --genesis-time-delay=30 --deposit-json-file="$DEPOSIT_FILE" --num-validators=$NUM_NODES
 
 #start el bootnode
-EXTIP=127.0.0.1
+EXTIP=$(hostname -I | awk '{print $1}')
 ENODE_PUBKEY=$(./bin/bootnode --nodekey=boot.key -writeaddress)
 nohup ./bin/bootnode --nodekey=boot.key -addr=$EXTIP:$GZOND_BOOTNODE_PORT -verbosity 5 > $BOOT_DIR/logs/bootnode.log 2>&1 &
 
@@ -90,7 +90,7 @@ sleep 0.5
 #start cl bootnode
 nohup ./bin/beacon-chain --datadir=$BOOT_DIR/beacondata --min-sync-peers=0  --bootstrap-node=  --execution-endpoint=   --accept-terms-of-use   --jwt-secret=  --verbosity debug --disable-monitoring --disable-grpc-gateway --disable-aggregate-parallel --disable-grpc-connection-logging --disable-optional-engine-methods --disable-staking-contract-check --checkpoint-sync-url= --genesis-state=genesis.ssz --chain-config-file=config.yml   --config-file=config.yml   --chain-id=1468 --p2p-max-peers=1000 --p2p-tcp-port=$QRYSM_BEACON_P2P_TCP_PORT --p2p-udp-port=$QRYSM_BEACON_P2P_UDP_PORT --rpc-port=$QRYSM_BEACON_RPC_PORT > $BOOT_DIR/logs/beacon.log 2>&1 &
 
-sleep 0.5
+sleep 2
 
 ENODE="enode://${ENODE_PUBKEY}@$EXTIP:0?discport=$GZOND_BOOTNODE_PORT"
 ENR=$(grep -i "enr" $BOOT_DIR/logs/beacon.log | sed -n 's/.*ENR="\([^"]*\)".*/\1/p' | tr -d '\n')
@@ -128,7 +128,7 @@ for (( i=1; i<=$NUM_NODES; i++ )); do
     if [ "$i" -eq 1 ]; then
       jq --arg seed "$provider" '.provider = $seed' send-tx/config.json > tmp.config.json && mv tmp.config.json send-tx/config.json
     fi
-    nohup ./bin/gzond   --nat=extip:0.0.0.0 --networkid=1468   --http   --http.api "web3,zond,net"   --datadir="$NODE_DIR"/gzonddata --syncmode=full   --snapshot=false --authrpc.jwtsecret="$NODE_DIR"/jwt.hex --bootnodes="$ENODE" --authrpc.port=$((GZOND_AUTH_RPC_PORT + i)) --http.port=$((GZOND_HTTP_PORT + i)) --ws.port=$((GZOND_WS_PORT + i)) --discovery.port=$((GZOND_NETWORK_PORT + i)) --port=$((GZOND_NETWORK_PORT + i)) --pprof.port=$((GZOND_PPROF_PORT + i)) --metrics.port=$((GZOND_METRICS_PORT + i)) > "$NODE_DIR"/logs/gzond.log 2>&1 &
+    nohup ./bin/gzond   --nat=extip:$EXTIP --networkid=1468   --http   --http.api "web3,zond,net"   --datadir="$NODE_DIR"/gzonddata --syncmode=full   --snapshot=false --authrpc.jwtsecret="$NODE_DIR"/jwt.hex --bootnodes="$ENODE" --authrpc.port=$((GZOND_AUTH_RPC_PORT + i)) --http.port=$((GZOND_HTTP_PORT + i)) --ws.port=$((GZOND_WS_PORT + i)) --discovery.port=$((GZOND_NETWORK_PORT + i)) --port=$((GZOND_NETWORK_PORT + i)) --pprof.port=$((GZOND_PPROF_PORT + i)) --metrics.port=$((GZOND_METRICS_PORT + i)) > "$NODE_DIR"/logs/gzond.log 2>&1 &
 
     sleep 0.5
 
